@@ -13,5 +13,5 @@ func main() {
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(w, "This is a root path.")
+	fmt.Fprintf(w, "[environment] is app engine: %v, is dev: %v\n", appengine.IsAppEngine(), appengine.IsDevAppServer())
 }
