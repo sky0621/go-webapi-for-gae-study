@@ -1,25 +1,36 @@
 package main
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"go-webapi-for-gae-study/backend/controller"
+	"go-webapi-for-gae-study/backend/model"
 	"google.golang.org/appengine"
 	"net/http"
 )
 
 func main()  {
-	// https://echo.labstack.com/guide
-	e := echo.New()
+	db, err := gorm.Open("mysql", "testuser:testpass@tcp(127.0.0.1:3306)/testdb?charset=utf8&parseTime=True&loc=Local")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	db.LogMode(true)
+	if err := db.DB().Ping(); err != nil {
+		panic(err)
+	}
+	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxOpenConns(10)
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.Secure())
+	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8").AutoMigrate(&model.User{})
+
+	e := echo.New()
+	defer e.Close()
 
 	http.Handle("/", e)
 	g := e.Group("/api/v1")
 
-	controller.HandleUser(g)
+	controller.NewUser(db).Handle(g)
 
 	appengine.Main()
 }
