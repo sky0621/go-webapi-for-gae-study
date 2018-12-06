@@ -1,31 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	"go-webapi-for-gae-study/backend/controller"
 	"google.golang.org/appengine"
 	"net/http"
 )
 
 func main()  {
-	http.HandleFunc("/", handleRoot)
-	appengine.Main()
-}
+	// https://echo.labstack.com/guide
+	e := echo.New()
 
-func handleRoot(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	fmt.Fprintf(w, "[AppID]: %v\n", appengine.AppID(c))
-	fmt.Fprintf(w, "[Datacenter]: %v\n", appengine.Datacenter(c))
-	fmt.Fprintf(w, "[DefaultVersionHostname]: %v\n", appengine.DefaultVersionHostname(c))
-	fmt.Fprintf(w, "[InstanceID]: %v\n", appengine.InstanceID())
-	fmt.Fprintf(w, "[IsAppEngine]: %v\n", appengine.IsAppEngine())
-	fmt.Fprintf(w, "[IsDevAppServer]: %v\n", appengine.IsDevAppServer())
-	fmt.Fprintf(w, "[IsFlex]: %v\n", appengine.IsFlex())
-	fmt.Fprintf(w, "[IsStandard]: %v\n", appengine.IsStandard())
-	fmt.Fprintf(w, "[ModuleName]: %v\n", appengine.ModuleName(c))
-	fmt.Fprintf(w, "[RequestID]: %v\n", appengine.RequestID(c))
-	fmt.Fprintf(w, "[ServerSoftware]: %v\n", appengine.ServerSoftware())
-	serviceAccount, _ := appengine.ServiceAccount(c)
-	fmt.Fprintf(w, "[ServiceAccount]: %v\n", serviceAccount)
-	fmt.Fprintf(w, "[VersionID]: %v\n", appengine.VersionID(c))
-	
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.Secure())
+
+	http.Handle("/", e)
+	g := e.Group("/api/v1")
+
+	controller.HandleUser(g)
+
+	appengine.Main()
 }
