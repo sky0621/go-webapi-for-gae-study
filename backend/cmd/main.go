@@ -2,18 +2,16 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
 	"google.golang.org/appengine"
+	"net/http"
 )
 
-func main() {
+func main()  {
 	http.HandleFunc("/", handleRoot)
 	appengine.Main()
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, GAE/go")
 	c := appengine.NewContext(r)
 	fmt.Fprintf(w, "[AppID]: %v\n", appengine.AppID(c))
 	fmt.Fprintf(w, "[Datacenter]: %v\n", appengine.Datacenter(c))
@@ -29,4 +27,5 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	serviceAccount, _ := appengine.ServiceAccount(c)
 	fmt.Fprintf(w, "[ServiceAccount]: %v\n", serviceAccount)
 	fmt.Fprintf(w, "[VersionID]: %v\n", appengine.VersionID(c))
+	
 }
