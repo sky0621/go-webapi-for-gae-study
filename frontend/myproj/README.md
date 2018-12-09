@@ -1,6 +1,6 @@
 # myproj
 
-> My world-class Nuxt.js project
+> My spectacular Nuxt.js project
 
 ## Build Setup
 

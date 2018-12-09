@@ -1,7 +1,7 @@
 {
   "name": "myproj",
   "version": "1.0.0",
-  "description": "My world-class Nuxt.js project",
+  "description": "My spectacular Nuxt.js project",
   "author": "sky0621",
   "private": true,
   "scripts": {
@@ -24,9 +24,6 @@
     "eslint": "^5.0.1",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-vue": "^4.0.0",
-    "eslint-config-prettier": "^3.1.0",
-    "eslint-plugin-prettier": "2.6.2",
-    "prettier": "1.14.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2"
   }
