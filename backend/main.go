@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/labstack/echo/middleware"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
@@ -35,14 +36,17 @@ func main()  {
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(10)
 
-	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8").AutoMigrate(&model.User{})
+	db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8").AutoMigrate(&model.Login{}, &model.Logout{}, &model.User{})
 
 	e := echo.New()
 	defer e.Close()
 
+	e.Use(middleware.CORS())
+
 	http.Handle("/", e)
 	g := e.Group("/api/v1")
 
+	controller.NewAuth(db).Handle(g)
 	controller.NewUser(db).Handle(g)
 
 	appengine.Main()
