@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"go-webapi-for-gae-study/backend/controller/form"
 	"go-webapi-for-gae-study/backend/model"
 	"net/http"
@@ -35,6 +36,8 @@ func (a *auth) login(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, errorJSON(http.StatusBadRequest, err.Error()))
 	}
+
+	fmt.Printf("[REQUEST_PARAMETER] JWT: %s\n", u.Jwt)
 
 	dao := model.NewAuthDao(a.db)
 	jwtToken, err := dao.Login(u.ParseToDto())

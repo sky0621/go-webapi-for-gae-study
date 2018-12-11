@@ -6,16 +6,17 @@ import (
 
 // Login ...
 type Login struct {
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Jwt string `json:"jwt"`
+	// Email    string `json:"email" validate:"required"`
+	// Password string `json:"password" validate:"required"`
 }
 
 // ParseToDto ...
 func (n *Login) ParseToDto() *model.Login {
 	// フォーマット変換等は、ここで吸収
 	return &model.Login{
-		Email:    n.Email,
-		Password: n.Password,
+		// Email:    n.Email,
+		// Password: n.Password,
 	}
 }
 

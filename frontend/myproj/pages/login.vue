@@ -48,18 +48,46 @@ export default {
       }
       firebase.initializeApp(config)
 
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(res => { 
-        localStorage.setItem('jwt', res.user.qa)
+      console.log(this.email)
+      console.log(this.password)
 
-        this.$axios
-          .$post('http://localhost:8080/api/v1/login', {
-            'jwt': res.user.qa
-          })
-          .then(res => (alert(res.id)))
-
-        this.$router.push('/')
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode)
+        console.log(errorMessage)
       })
+
+          const user = firebase.auth().currentUser
+          if (user != null) {
+            name = user.displayName;
+            email = user.email;
+            photoUrl = user.photoURL;
+            emailVerified = user.emailVerified;
+            uid = user.uid;
+            userJSON = user.toJSON
+            console.log(name)
+            console.log(email)
+            console.log(photoUrl)
+            console.log(emailVerified)
+            console.log(uid)
+            console.log(userJSON)
+            jwt = user.jwt
+            console.log(jwt)
+
+            localStorage.setItem('jwt', jwt)
+
+            this.$axios
+              .$post('http://localhost:8080/api/v1/login', {'jwt': jwt})
+              .then(res => {
+                alert(res.id)
+                this.$router.push('/')
+              })
+          } else {
+            alert('No res')
+          }
     }
-  },
+  }
 }
 </script>
