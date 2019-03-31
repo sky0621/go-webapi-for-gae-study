@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify'
+import Vuetify from 'go-webapi-for-gae-study/old/frontend/myproj/plugins/vuetify'
 import colors from 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify, {
