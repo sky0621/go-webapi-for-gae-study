@@ -98,11 +98,20 @@ func main() {
 		}
 	})
 
-	addr := ":80"
+	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
+	fmt.Printf("[GWFGS] PORT: %s\n", port)
 	if isLocal {
-		addr = ":8080"
+		port = ":8080"
 	}
-	if err := http.ListenAndServe(addr, nil); err != nil {
+	if err := http.ListenAndServe(port, nil); err != nil {
 		panic(err)
 	}
+}
+
+func errWrapN(n int, err error) {
+	panic(err)
+}
+
+func errWrap(err error) {
+	panic(err)
 }
