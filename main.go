@@ -54,39 +54,16 @@ func main() {
 	// ユーザー登録を行うWebAPIの定義
 	// --------------------------------------------------------------
 	http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("[GWFGS] /users")
-
-		if r.Header.Get("Content-Type") != "application/json" {
+		user, err := parseJsonRequest(r)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		length, err := strconv.Atoi(r.Header.Get("Content-Length"))
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		body := make([]byte, length)
-		length, err = r.Body.Read(body)
-		if err != nil && err != io.EOF {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		var jsonBody map[string]interface{}
-		err = json.Unmarshal(body[:length], &jsonBody)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		switch r.Method {
 		case http.MethodPost:
-			fmt.Println("[GWFGS] POST")
-
 			result, err := db.ExecContext(context.Background(), "INSERT INTO user(id, name, mail, create_user) VALUES(?, ?, ?, ?)",
-				uuid.New().String(), jsonBody["name"], jsonBody["mail"], "admin")
+				uuid.New().String(), user.Name, user.Mail, "admin")
 			if err != nil {
 				if _, err := fmt.Fprintln(w, err.Error()); err != nil {
 					panic(err)
@@ -108,10 +85,32 @@ func main() {
 	}
 }
 
-func errWrapN(n int, err error) {
-	panic(err)
+func parseJsonRequest(r *http.Request) (*user, error) {
+	if r.Header.Get("Content-Type") != "application/json" {
+		return nil, fmt.Errorf("invalid header Content-Type: %s", r.Header.Get("Content-Type"))
+	}
+
+	length, err := strconv.Atoi(r.Header.Get("Content-Length"))
+	if err != nil {
+		return nil, fmt.Errorf("invalid header Content-Length: %s, Error: %s", r.Header.Get("Content-Length"), err.Error())
+	}
+
+	body := make([]byte, length)
+	length, err = r.Body.Read(body)
+	if err != nil && err != io.EOF {
+		return nil, fmt.Errorf("invalid Body Error: %s", err.Error())
+	}
+
+	var u *user
+	err = json.Unmarshal(body[:length], &u)
+	if err != nil {
+		return nil, fmt.Errorf("invalid Body Error: %s", err.Error())
+	}
+
+	return u, nil
 }
 
-func errWrap(err error) {
-	panic(err)
+type user struct {
+	Name string `json:"user"`
+	Mail string `json:"mail"`
 }
