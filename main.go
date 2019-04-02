@@ -111,6 +111,6 @@ func parseJsonRequest(r *http.Request) (*user, error) {
 }
 
 type user struct {
-	Name string `json:"user"`
+	Name string `json:"name"`
 	Mail string `json:"mail"`
 }
